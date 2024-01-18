@@ -62,145 +62,154 @@
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
         var createScene = function () {
-    // This creates a basic Babylon Scene object (non-mesh)
-    var scene = new BABYLON.Scene(engine);
-
-    var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, .75, 0), scene);
-
-    // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
-
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
-
-    // Our built-in 'ground' shape.
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
-    const groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
-    let groundTexture = new BABYLON.Texture(Assets.textures.checkerboard_basecolor_png.rootUrl, scene);
-    groundMaterial.diffuseTexture = groundTexture;
-    ground.material = groundMaterial;
-
-    const mainFolder = "https://mrtrickster.github.io/televerse.store/";
-    const modelsFolder = "https://mrtrickster.github.io/televerse.store/models/";
-
-    var prevArrow, nextArrow;
-
-    var charactersList;
-    var counter = 0;
-    var character;
-
-    loadCharactersList();
-
-    BABYLON.SceneLoader.ImportMesh("", modelsFolder, "ArrowNext.glb", scene, function(meshes){
-        var prevArrowObject = meshes[0];
-        prevArrowObject.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-        prevArrowObject.position = new BABYLON.Vector3(-.75, .75, .25);
-        prevArrow = prevArrowObject.getChildMeshes(false)[0];
-
-        var nextArrowObject = prevArrowObject.clone();
-        nextArrowObject.rotation = new BABYLON.Vector3(0, 0, 0);
-        nextArrowObject.position = new BABYLON.Vector3(.75, .75, .25);
-        nextArrow = nextArrowObject.getChildMeshes(false)[0];
-    });
-
-    scene.onPointerDown = function(event, pickInfo) {
-        if (pickInfo.hit) {
-            switch(pickInfo.pickedMesh) {
-                case prevArrow:
-                    console.log("prevArrow clicked!");
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+        
+            var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, .75, 0), scene);
+        
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+        
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+        
+            // Default intensity is 1. Let's dim the light a small amount
+            light.intensity = 0.7;
+        
+            // Our built-in 'ground' shape.
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+            const groundMaterial = new BABYLON.StandardMaterial("Ground Material", scene);
+            let groundTexture = new BABYLON.Texture(Assets.textures.checkerboard_basecolor_png.rootUrl, scene);
+            groundMaterial.diffuseTexture = groundTexture;
+            ground.material = groundMaterial;
+        
+            const mainFolder = "https://mrtrickster.github.io/televerse.store/";
+            const modelsFolder = "https://mrtrickster.github.io/televerse.store/models/";
+        
+            var prevArrow, nextArrow;
+        
+            var charactersList;
+            var counter = 0;
+            var character;
+        
+            loadCharactersList();
+            createGUI();
+        
+            function loadCharactersList() {
+                fetch(mainFolder + 'maleCharacters.json').then(response => response.json()).then(data => {
+                    // 'data' is the parsed JSON object
+                    console.log(data);
+                    charactersList = findNodeByName(data, "characters");
+                    removeCharacter();
+                    loadCharacter();
+                }).catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+            }
+        
+            function removeCharacter() {
+                if (character) {
+                    // Remove the mesh from the scene
+                    character.dispose();
+                    // Optionally, set the reference to null or perform any additional cleanup
+                    character = null;
+                }
+            }
+        
+            function loadCharacter() {    
+                BABYLON.SceneLoader.ImportMesh("", modelsFolder, charactersList[counter] + ".glb", scene, function(newMeshes){
+                    newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+                    character = newMeshes[0];
+                });
+            }
+            
+            function findNodeByName(jsonObj, nodeName) {
+                // Base case: if the current node is an object and has the desired name, return it
+                if (typeof jsonObj === 'object' && jsonObj !== null) {
+                    if (jsonObj.hasOwnProperty(nodeName)) {
+                        return jsonObj[nodeName];
+                    }
+                }
+                // Recursive case: traverse all properties of the current node
+                for (var key in jsonObj) {
+                    if (jsonObj.hasOwnProperty(key)) {
+                        var foundNode = findNodeByName(jsonObj[key], nodeName);
+                        if (foundNode !== undefined) {
+                            return foundNode;
+                        }
+                    }
+                }
+                // Node with the desired name not found
+                return undefined;
+            }
+        
+            function createGUI() {
+                // GUI
+                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                
+                var prevButton = BABYLON.GUI.Button.CreateSimpleButton("prevButton", "<");
+                prevButton.width = "60px";
+                prevButton.height = "60px";
+                prevButton.left = "-100px";
+                prevButton.color = "white";
+                prevButton.cornerRadius = 30;
+                prevButton.background = "blue";
+                prevButton.onPointerUpObservable.add(function() {
                     if (counter > 0) counter--;
                     else counter = charactersList.length - 1;
                     removeCharacter();
                     loadCharacter();
-                    break;
-                case nextArrow:
-                    console.log("nextArrow clicked!");
+                });
+                advancedTexture.addControl(prevButton);
+        
+                var nextButton = BABYLON.GUI.Button.CreateSimpleButton("nextButton", ">");
+                nextButton.width = "60px";
+                nextButton.height = "60px";
+                nextButton.left = "100px";
+                nextButton.color = "white";
+                nextButton.cornerRadius = 30;
+                nextButton.background = "blue";
+                nextButton.onPointerUpObservable.add(function() {
                     if (counter < charactersList.length - 1) counter++;
                     else counter = 0;
                     removeCharacter();
                     loadCharacter();
-                    break;
+                });
+                advancedTexture.addControl(nextButton);
+                
+                var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Select Me!");
+                button1.width = "150px"
+                button1.height = "40px";
+                button1.top = "200px";
+                button1.color = "white";
+                button1.cornerRadius = 20;
+                button1.background = "green";
+                button1.onPointerUpObservable.add(function() {
+                    alert("you did it!");
+                });
+                advancedTexture.addControl(button1);
             }
-        }
-    }
-
-    function loadCharactersList() {
-        fetch(mainFolder + 'maleCharacters.json').then(response => response.json()).then(data => {
-            // 'data' is the parsed JSON object
-            console.log(data);
-            charactersList = findNodeByName(data, "characters");
-            removeCharacter();
-            loadCharacter();
-        }).catch(error => {
-            console.error('Error fetching JSON:', error);
-        });
-    }
-
-    function removeCharacter() {
-        if (character) {
-            // Remove the mesh from the scene
-            character.dispose();
-            // Optionally, set the reference to null or perform any additional cleanup
-            character = null;
-        }
-    }
-
-    function loadCharacter() {    
-        BABYLON.SceneLoader.ImportMesh("", modelsFolder, charactersList[counter] + ".glb", scene, function(newMeshes){
-            newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-            character = newMeshes[0];
-        });
-    }
-    
-    function findNodeByName(jsonObj, nodeName) {
-        // Base case: if the current node is an object and has the desired name, return it
-        if (typeof jsonObj === 'object' && jsonObj !== null) {
-            if (jsonObj.hasOwnProperty(nodeName)) {
-                return jsonObj[nodeName];
-            }
-        }
-        // Recursive case: traverse all properties of the current node
-        for (var key in jsonObj) {
-            if (jsonObj.hasOwnProperty(key)) {
-                var foundNode = findNodeByName(jsonObj[key], nodeName);
-                if (foundNode !== undefined) {
-                    return foundNode;
+        
+            return scene;
+        };
+        window.initFunction = async function() {
+            var asyncEngineCreation = async function() {
+                try {
+                    return createDefaultEngine();
+                } catch(e) {
+                    console.log("the available createEngine function failed. Creating the default engine instead");
+                    return createDefaultEngine();
                 }
             }
-        }
-        // Node with the desired name not found
-        return undefined;
-    }
-
-    return scene;
-};
-                window.initFunction = async function() {
-                    
-                    
-                    
-                    var asyncEngineCreation = async function() {
-                        try {
-                        return createDefaultEngine();
-                        } catch(e) {
-                        console.log("the available createEngine function failed. Creating the default engine instead");
-                        return createDefaultEngine();
-                        }
-                    }
-
-                    window.engine = await asyncEngineCreation();
-        if (!engine) throw 'engine should not be null.';
-        startRenderLoop(engine, canvas);
-        window.scene = createScene();};
-        initFunction().then(() => {sceneToRender = scene                    
-        });
+            window.engine = await asyncEngineCreation();
+            if (!engine) throw 'engine should not be null.';
+            startRenderLoop(engine, canvas);
+            window.scene = createScene();
+        };
+        initFunction().then(() => {sceneToRender = scene});
 
         // Resize
-        window.addEventListener("resize", function () {
-            engine.resize();
-        });
+        window.addEventListener("resize", function () {engine.resize();});
     </script>
 </body>
 </html>

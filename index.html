@@ -107,6 +107,11 @@
                     // 'data' is the parsed JSON object
                     console.log(data);
                     charactersList = findNodeByName(data, "characters");
+
+                    
+                    log("selected character: " + webApp.CloudStorage.getItem("character"));
+
+                    
                     removeCharacter();
                     loadCharacter();
                 }).catch(error => {
@@ -202,6 +207,7 @@
                 button1.background = "green";
                 button1.onPointerUpObservable.add(function() {
                     log(webApp.initDataUnsafe.user.first_name + ", you did it!");
+                    webApp.CloudStorage.setItem("character", charactersList[counter]);
                 });
                 advancedTexture.addControl(button1);
             }

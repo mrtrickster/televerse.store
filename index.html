@@ -197,6 +197,9 @@
             return scene;
         };
         window.initFunction = async function() {
+
+            console.log(window.Telegram.WebApp);
+            
             var asyncEngineCreation = async function() {
                 try {
                     return createDefaultEngine();

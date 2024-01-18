@@ -65,7 +65,7 @@
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
 
-    var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 10, BABYLON.Vector3.Zero(), scene);
+    var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, .75, 0), scene);
 
     // This attaches the camera to the canvas
     camera.attachControl(canvas, true);
@@ -83,9 +83,97 @@
     groundMaterial.diffuseTexture = groundTexture;
     ground.material = groundMaterial;
 
-    BABYLON.SceneLoader.ImportMesh("", "models/", "Character_BusinessMan_Shirt_01.glb", scene, function(newMeshes){
-        newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+    const mainFolder = "https://mrtrickster.github.io/televerse.store/";
+    const modelsFolder = "https://mrtrickster.github.io/televerse.store/models/";
+
+    var prevArrow, nextArrow;
+
+    var charactersList;
+    var counter = 0;
+    var character;
+
+    loadCharactersList();
+
+    BABYLON.SceneLoader.ImportMesh("", modelsFolder, "ArrowNext.glb", scene, function(meshes){
+        var prevArrowObject = meshes[0];
+        prevArrowObject.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+        prevArrowObject.position = new BABYLON.Vector3(-.75, .75, .25);
+        prevArrow = prevArrowObject.getChildMeshes(false)[0];
+
+        var nextArrowObject = prevArrowObject.clone();
+        nextArrowObject.rotation = new BABYLON.Vector3(0, 0, 0);
+        nextArrowObject.position = new BABYLON.Vector3(.75, .75, .25);
+        nextArrow = nextArrowObject.getChildMeshes(false)[0];
     });
+
+    scene.onPointerDown = function(event, pickInfo) {
+        if (pickInfo.hit) {
+            switch(pickInfo.pickedMesh) {
+                case prevArrow:
+                    console.log("prevArrow clicked!");
+                    if (counter > 0) counter--;
+                    else counter = charactersList.length - 1;
+                    removeCharacter();
+                    loadCharacter();
+                    break;
+                case nextArrow:
+                    console.log("nextArrow clicked!");
+                    if (counter < charactersList.length - 1) counter++;
+                    else counter = 0;
+                    removeCharacter();
+                    loadCharacter();
+                    break;
+            }
+        }
+    }
+
+    function loadCharactersList() {
+        fetch(mainFolder + 'maleCharacters.json').then(response => response.json()).then(data => {
+            // 'data' is the parsed JSON object
+            console.log(data);
+            charactersList = findNodeByName(data, "characters");
+            removeCharacter();
+            loadCharacter();
+        }).catch(error => {
+            console.error('Error fetching JSON:', error);
+        });
+    }
+
+    function removeCharacter() {
+        if (character) {
+            // Remove the mesh from the scene
+            character.dispose();
+            // Optionally, set the reference to null or perform any additional cleanup
+            character = null;
+        }
+    }
+
+    function loadCharacter() {    
+        BABYLON.SceneLoader.ImportMesh("", modelsFolder, charactersList[counter] + ".glb", scene, function(newMeshes){
+            newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+            character = newMeshes[0];
+        });
+    }
+    
+    function findNodeByName(jsonObj, nodeName) {
+        // Base case: if the current node is an object and has the desired name, return it
+        if (typeof jsonObj === 'object' && jsonObj !== null) {
+            if (jsonObj.hasOwnProperty(nodeName)) {
+                return jsonObj[nodeName];
+            }
+        }
+        // Recursive case: traverse all properties of the current node
+        for (var key in jsonObj) {
+            if (jsonObj.hasOwnProperty(key)) {
+                var foundNode = findNodeByName(jsonObj[key], nodeName);
+                if (foundNode !== undefined) {
+                    return foundNode;
+                }
+            }
+        }
+        // Node with the desired name not found
+        return undefined;
+    }
 
     return scene;
 };

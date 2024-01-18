@@ -115,11 +115,11 @@
                         } else {
                             log(error);
                         }
+                        removeCharacter();
+                        loadCharacter();
                     });
 
                     
-                    removeCharacter();
-                    loadCharacter();
                 }).catch(error => {
                     console.error('Error fetching JSON:', error);
                 });
@@ -229,7 +229,7 @@
         window.initFunction = async function() {
 
             webApp = window.Telegram.WebApp;
-            if (webApp != null) alert("webapp set!");
+            //if (webApp != null) alert("webapp set!");
             
             var asyncEngineCreation = async function() {
                 try {

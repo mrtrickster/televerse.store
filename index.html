@@ -108,8 +108,12 @@
                     console.log(data);
                     charactersList = findNodeByName(data, "characters");
 
-                    
-                    log("selected character: " + webApp.CloudStorage.getItem("character"));
+                    var request = webApp.CloudStorage.getItem("character", function(error, value) {
+                        if (!error)
+                            log("selected character: " + value);
+                        else
+                            log(error);
+                    });
 
                     
                     removeCharacter();

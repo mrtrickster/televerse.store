@@ -67,16 +67,20 @@
             // This creates a basic Babylon Scene object (non-mesh)
             var scene = new BABYLON.Scene(engine);
         
-            var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, .75, 0), scene);
+            var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, 1, 0), scene);
         
             // This attaches the camera to the canvas
             camera.attachControl(canvas, true);
+            camera.panningAxis = new BABYLON.Vector3.Zero;
+            camera.upperBetaLimit = Math.PI/2;
+            camera.lowerRadiusLimit = 2;
+            camera.upperRadiusLimit = 10;
         
             // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
             var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         
             // Default intensity is 1. Let's dim the light a small amount
-            light.intensity = 0.7;
+            light.intensity = 0.8;
         
             // Our built-in 'ground' shape.
             var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
@@ -87,8 +91,6 @@
         
             const mainFolder = "https://mrtrickster.github.io/televerse.store/";
             const modelsFolder = "https://mrtrickster.github.io/televerse.store/models/";
-        
-            var prevArrow, nextArrow;
         
             var charactersList;
             var counter = 0;
@@ -152,7 +154,7 @@
                 var prevButton = BABYLON.GUI.Button.CreateSimpleButton("prevButton", "<");
                 prevButton.width = "60px";
                 prevButton.height = "60px";
-                prevButton.left = "-100px";
+                prevButton.left = "-120px";
                 prevButton.color = "white";
                 prevButton.cornerRadius = 30;
                 prevButton.background = "blue";
@@ -167,7 +169,7 @@
                 var nextButton = BABYLON.GUI.Button.CreateSimpleButton("nextButton", ">");
                 nextButton.width = "60px";
                 nextButton.height = "60px";
-                nextButton.left = "100px";
+                nextButton.left = "120px";
                 nextButton.color = "white";
                 nextButton.cornerRadius = 30;
                 nextButton.background = "blue";

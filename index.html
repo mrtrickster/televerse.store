@@ -111,6 +111,7 @@
                     var request = webApp.CloudStorage.getItem("character", function(error, value) {
                         if (!error)
                             log("selected character: " + value);
+                            counter = charactersList.indexOf(value);
                         else
                             log(error);
                     });

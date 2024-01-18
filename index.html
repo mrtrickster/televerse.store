@@ -63,6 +63,8 @@
         var scene = null;
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        
+        <!-- Babylon.js block start -->
         var createScene = function () {
             // This creates a basic Babylon Scene object (non-mesh)
             var scene = new BABYLON.Scene(engine);
@@ -95,7 +97,9 @@
             var charactersList;
             var counter = 0;
             var character;
-        
+
+            log(window.Telegram.WebApp);
+            
             loadCharactersList();
             createGUI();
         
@@ -147,10 +151,19 @@
                 return undefined;
             }
         
+            var debugText;
+        
             function createGUI() {
                 // GUI
                 var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
                 
+                debugText = new BABYLON.GUI.TextBlock("debugText", "Start\n");
+                debugText.color = "white";
+                debugText.fontSize = "10px";
+                debugText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                debugText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                advancedTexture.addControl(debugText);
+        
                 var prevButton = BABYLON.GUI.Button.CreateSimpleButton("prevButton", "<");
                 prevButton.width = "60px";
                 prevButton.height = "60px";
@@ -189,17 +202,20 @@
                 button1.cornerRadius = 20;
                 button1.background = "green";
                 button1.onPointerUpObservable.add(function() {
-                    alert("you did it!");
+                    log("you did it!");
                 });
                 advancedTexture.addControl(button1);
             }
         
+            function log(message) {
+                debugText.text += message + "\n";
+            }
+        
             return scene;
         };
+        <!-- Babylon.js block end -->
+    
         window.initFunction = async function() {
-
-            console.log(window.Telegram.WebApp);
-            
             var asyncEngineCreation = async function() {
                 try {
                     return createDefaultEngine();

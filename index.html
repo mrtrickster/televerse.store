@@ -109,11 +109,12 @@
                     charactersList = findNodeByName(data, "characters");
 
                     var request = webApp.CloudStorage.getItem("character", function(error, value) {
-                        if (!error)
+                        if (!error) {
                             log("selected character: " + value);
                             counter = charactersList.indexOf(value);
-                        else
+                        } else {
                             log(error);
+                        }
                     });
 
                     

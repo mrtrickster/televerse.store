@@ -100,31 +100,33 @@
             var counter = 0;
             var character;
             
-            loadCharactersList();
+            loadCharactersList("male");
             createGUI();
         
-            function loadCharactersList() {
-                fetch(mainFolder + 'maleCharacters.json').then(response => response.json()).then(data => {
-                    // 'data' is the parsed JSON object
-                    console.log(data);
+            function loadCharactersList(gender) {
+                fetch(mainFolder + gender + 'Characters.json').then(response => response.json()).then(data => {
                     charactersList = findNodeByName(data, "characters");
-
-                    var request = webApp.CloudStorage.getItem("character", function(error, value) {
-                        if (!error) {
-                            log("selected character: " + value);
-                            counter = charactersList.indexOf(value);
-                        } else {
-                            log(error);
-                        }
-                        removeCharacter();
-                        loadCharacter();
-                    });
-
-                    
+					getSelectedCharacter();
                 }).catch(error => {
                     console.error('Error fetching JSON:', error);
                 });
             }
+			
+			function getSelectedCharacter() {
+				var request = webApp.CloudStorage.getItem("character", function(error, value) {
+					if (!error) {
+						counter = charactersList.indexOf(value);
+					} else {
+						log(error);
+					}
+					replaceCharacter();
+				});
+			}
+			
+			function replaceCharacter() {
+				removeCharacter();
+				loadCharacter();
+			}
         
             function removeCharacter() {
                 if (character) {
@@ -185,8 +187,7 @@
                 prevButton.onPointerUpObservable.add(function() {
                     if (counter > 0) counter--;
                     else counter = charactersList.length - 1;
-                    removeCharacter();
-                    loadCharacter();
+                    replaceCharacter();
                 });
                 advancedTexture.addControl(prevButton);
         
@@ -200,8 +201,7 @@
                 nextButton.onPointerUpObservable.add(function() {
                     if (counter < charactersList.length - 1) counter++;
                     else counter = 0;
-                    removeCharacter();
-                    loadCharacter();
+                    replaceCharacter();
                 });
                 advancedTexture.addControl(nextButton);
                 

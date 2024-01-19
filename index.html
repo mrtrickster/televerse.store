@@ -230,7 +230,7 @@
         window.initFunction = async function() {
 
             webApp = window.Telegram.WebApp;
-            //if (webApp != null) alert("webapp set!");
+            if (webApp != null) webApp.expand();
             
             var asyncEngineCreation = async function() {
                 try {

@@ -105,15 +105,18 @@
 			var advancedTexture;
             
 			getCharacterData();
-            //loadCharactersList("male");
             createGUI();
 			
 			function getCharacterData() {
 				var request = webApp.CloudStorage.getItem("characterData", function(error, value) {
 					if (!error) {
-						log("characterData: " + value);
-						characterData = value;
-						loadCharactersList("male");
+						if (value === "") {
+							showGenderSwitcher();
+						} else {
+							log("characterData: " + value);
+							characterData = value;
+							loadCharactersList(value);
+						}
 					} else {
 						showGenderSwitcher();
 					}

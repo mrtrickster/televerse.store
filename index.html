@@ -51,6 +51,10 @@
     <script>
 		var version = "0.0.3";
         var canvas = document.getElementById("renderCanvas");
+        var webApp = null;
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
 
         var startRenderLoop = function (engine, canvas) {
             engine.runRenderLoop(function () {
@@ -60,11 +64,11 @@
             });
         }
 
-        var webApp = null;
-        var engine = null;
-        var scene = null;
-        var sceneToRender = null;
-        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        var createDefaultEngine = function() {
+			return new BABYLON.Engine(canvas, true, {
+				preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false
+			});
+		};
         
         // Babylon.js block start
 

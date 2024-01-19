@@ -66,7 +66,8 @@
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
         
-        <!-- Babylon.js block start -->
+        // Babylon.js block start
+		
         var createScene = function () {
             // This creates a basic Babylon Scene object (non-mesh)
             var scene, camera, light;
@@ -328,7 +329,8 @@
         
             return scene;
         };
-        <!-- Babylon.js block end -->
+
+        // Babylon.js block end
     
         window.initFunction = async function() {
 

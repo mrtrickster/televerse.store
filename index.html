@@ -62,7 +62,7 @@
                     sceneToRender.render();
                 }
             });
-        }
+        };
 
         var createDefaultEngine = function() {
 			return new BABYLON.Engine(canvas, true, {
@@ -99,7 +99,7 @@
 			createLight();
             createGUI();
 			
-			//getCharacterData();
+			getCharacterData();
 			
 			// FUNCTIONS
 			
@@ -225,41 +225,41 @@
 				var maleButton, femaleButton;
 				createMaleButton();
 				createFemaleButton();
+			}
 				
-				function createMaleButton() {
-					maleButton = BABYLON.GUI.Button.CreateSimpleButton("maleButton", "Male");
-					maleButton.width = "120px"
-					maleButton.height = "40px";
-					maleButton.top = "172px";
-					maleButton.color = "white";
-					maleButton.cornerRadius = 20;
-					maleButton.background = "green";
-					maleButton.onPointerUpObservable.add(function() {
-						onGenderSelected("male");
-					});
-					advancedTexture.addControl(maleButton);
-				}
-				
-				function createFemaleButton() {
-					femaleButton = BABYLON.GUI.Button.CreateSimpleButton("femaleButton", "Female");
-					femaleButton.width = "120px"
-					femaleButton.height = "40px";
-					femaleButton.top = "228px";
-					femaleButton.color = "white";
-					femaleButton.cornerRadius = 20;
-					femaleButton.background = "green";
-					femaleButton.onPointerUpObservable.add(function() {
-						onGenderSelected("female");
-					});
-					advancedTexture.addControl(femaleButton);
-				}
-				
-				function onGenderSelected(gender) {					
-					log(webApp.initDataUnsafe.user.first_name + " selected " + gender + " gender");
-					webApp.CloudStorage.setItem("characterData", gender);
-					destroyElements([maleButton, femaleButton]);
-					loadCharactersList(gender);
-				}
+			function createMaleButton() {
+				maleButton = BABYLON.GUI.Button.CreateSimpleButton("maleButton", "Male");
+				maleButton.width = "120px"
+				maleButton.height = "40px";
+				maleButton.top = "172px";
+				maleButton.color = "white";
+				maleButton.cornerRadius = 20;
+				maleButton.background = "green";
+				maleButton.onPointerUpObservable.add(function() {
+					onGenderSelected("male");
+				});
+				advancedTexture.addControl(maleButton);
+			}
+			
+			function createFemaleButton() {
+				femaleButton = BABYLON.GUI.Button.CreateSimpleButton("femaleButton", "Female");
+				femaleButton.width = "120px"
+				femaleButton.height = "40px";
+				femaleButton.top = "228px";
+				femaleButton.color = "white";
+				femaleButton.cornerRadius = 20;
+				femaleButton.background = "green";
+				femaleButton.onPointerUpObservable.add(function() {
+					onGenderSelected("female");
+				});
+				advancedTexture.addControl(femaleButton);
+			}
+			
+			function onGenderSelected(gender) {					
+				log(webApp.initDataUnsafe.user.first_name + " selected " + gender + " gender");
+				webApp.CloudStorage.setItem("characterData", gender);
+				destroyElements([maleButton, femaleButton]);
+				loadCharactersList(gender);
 			}
 			
 			function createCharacterSelectGUI() {
@@ -267,53 +267,53 @@
 				createPrevButton();
 				createNextButton();
 				createConfirmButton();
-				
-				function createPrevButton() {
-					prevButton = BABYLON.GUI.Button.CreateSimpleButton("prevButton", "<");
-					prevButton.width = "60px";
-					prevButton.height = "60px";
-					prevButton.left = "-120px";
-					prevButton.color = "white";
-					prevButton.cornerRadius = 30;
-					prevButton.background = "blue";
-					prevButton.onPointerUpObservable.add(function() {
-						if (counter > 0) counter--;
-						else counter = charactersList.length - 1;
-						replaceCharacter();
-					});
-					advancedTexture.addControl(prevButton);
-				}
-				
-				function createNextButton() {
-					nextButton = BABYLON.GUI.Button.CreateSimpleButton("nextButton", ">");
-					nextButton.width = "60px";
-					nextButton.height = "60px";
-					nextButton.left = "120px";
-					nextButton.color = "white";
-					nextButton.cornerRadius = 30;
-					nextButton.background = "blue";
-					nextButton.onPointerUpObservable.add(function() {
-						if (counter < charactersList.length - 1) counter++;
-						else counter = 0;
-						replaceCharacter();
-					});
-					advancedTexture.addControl(nextButton);
-				}
-				
-				function createConfirmButton() {
-					confirmButton = BABYLON.GUI.Button.CreateSimpleButton("confirmButton", "Select Me!");
-					confirmButton.width = "150px"
-					confirmButton.height = "40px";
-					confirmButton.top = "200px";
-					confirmButton.color = "white";
-					confirmButton.cornerRadius = 20;
-					confirmButton.background = "green";
-					confirmButton.onPointerUpObservable.add(function() {
-						log(webApp.initDataUnsafe.user.first_name + ", you did it!");
-						webApp.CloudStorage.setItem("character", charactersList[counter]);
-					});
-					advancedTexture.addControl(confirmButton);
-				}
+			}
+
+			function createPrevButton() {
+				prevButton = BABYLON.GUI.Button.CreateSimpleButton("prevButton", "<");
+				prevButton.width = "60px";
+				prevButton.height = "60px";
+				prevButton.left = "-120px";
+				prevButton.color = "white";
+				prevButton.cornerRadius = 30;
+				prevButton.background = "blue";
+				prevButton.onPointerUpObservable.add(function() {
+					if (counter > 0) counter--;
+					else counter = charactersList.length - 1;
+					replaceCharacter();
+				});
+				advancedTexture.addControl(prevButton);
+			}
+			
+			function createNextButton() {
+				nextButton = BABYLON.GUI.Button.CreateSimpleButton("nextButton", ">");
+				nextButton.width = "60px";
+				nextButton.height = "60px";
+				nextButton.left = "120px";
+				nextButton.color = "white";
+				nextButton.cornerRadius = 30;
+				nextButton.background = "blue";
+				nextButton.onPointerUpObservable.add(function() {
+					if (counter < charactersList.length - 1) counter++;
+					else counter = 0;
+					replaceCharacter();
+				});
+				advancedTexture.addControl(nextButton);
+			}
+			
+			function createConfirmButton() {
+				confirmButton = BABYLON.GUI.Button.CreateSimpleButton("confirmButton", "Select Me!");
+				confirmButton.width = "150px"
+				confirmButton.height = "40px";
+				confirmButton.top = "200px";
+				confirmButton.color = "white";
+				confirmButton.cornerRadius = 20;
+				confirmButton.background = "green";
+				confirmButton.onPointerUpObservable.add(function() {
+					log(webApp.initDataUnsafe.user.first_name + ", you did it!");
+					webApp.CloudStorage.setItem("character", charactersList[counter]);
+				});
+				advancedTexture.addControl(confirmButton);
 			}
 			
 			function destroyElements(arr) {
@@ -352,10 +352,14 @@
             window.scene = createScene();
         };
 
-        initFunction().then(() => {sceneToRender = scene});
+        initFunction().then(() => {
+			sceneToRender = scene;
+		});
 
         // Resize
-        window.addEventListener("resize", function () {engine.resize();});
+        window.addEventListener("resize", function () {
+			engine.resize();
+		});
     </script>
 </body>
 </html>

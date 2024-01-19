@@ -49,7 +49,7 @@
 <body>
     <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
     <script>
-		var version = "0.0.2";
+		var version = "0.0.3";
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -69,23 +69,8 @@
         <!-- Babylon.js block start -->
         var createScene = function () {
             // This creates a basic Babylon Scene object (non-mesh)
-            var scene = new BABYLON.Scene(engine);
+            var scene, camera, light;
         
-            var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, 1, 0), scene);
-        
-            // This attaches the camera to the canvas
-            camera.attachControl(canvas, false);
-            camera.panningAxis = new BABYLON.Vector3.Zero;
-            camera.upperBetaLimit = Math.PI/2;
-            camera.lowerBetaLimit = 0.1;
-            camera.lowerRadiusLimit = 2;
-            camera.upperRadiusLimit = 10;
-        
-            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-            var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-        
-            // Default intensity is 1. Let's dim the light a small amount
-            light.intensity = 0.8;
         
             // Our built-in 'ground' shape.
             var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
@@ -105,8 +90,46 @@
 			var advancedTexture;
             var debugText;
 			
-			getCharacterData();
+			createScene();
+			createCamera();
+			createLight();
             createGUI();
+			
+			getCharacterData();
+			
+			// FUNCTIONS
+			
+			function createScene() {
+				scene = new BABYLON.Scene(engine);
+			}
+			
+			function createCamera() {
+				camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, 1, 0), scene);			
+				// This attaches the camera to the canvas
+				camera.attachControl(canvas, false);
+				camera.panningAxis = new BABYLON.Vector3.Zero;
+				camera.upperBetaLimit = Math.PI/2;
+				camera.lowerBetaLimit = 0.1;
+				camera.lowerRadiusLimit = 2;
+				camera.upperRadiusLimit = 10;
+			}
+			
+			function createLight() {
+				light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+				// Default intensity is 1. Let's dim the light a small amount
+				light.intensity = 0.8;
+			}
+        
+            function createGUI() {
+                advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                
+                debugText = new BABYLON.GUI.TextBlock("debugText", "Start version " + version + "\n");
+                debugText.color = "white";
+                debugText.fontSize = "10px";
+                debugText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                debugText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                advancedTexture.addControl(debugText);   
+            }
 			
 			function getCharacterData() {
 				var request = webApp.CloudStorage.getItem("characterData", function(error, value) {
@@ -192,18 +215,6 @@
                 }
                 // Node with the desired name not found
                 return undefined;
-            }
-        
-            function createGUI() {
-                // GUI
-                advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-                
-                debugText = new BABYLON.GUI.TextBlock("debugText", "Start version " + version + "\n");
-                debugText.color = "white";
-                debugText.fontSize = "10px";
-                debugText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                debugText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                advancedTexture.addControl(debugText);   
             }
 			
 			function createGenderSwitchGUI() {

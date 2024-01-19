@@ -67,11 +67,10 @@
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
         
         // Babylon.js block start
-		
+
         var createScene = function () {
             // This creates a basic Babylon Scene object (non-mesh)
-            var scene, camera, light;
-        
+            var camera, light;
         
             // Our built-in 'ground' shape.
             var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
@@ -333,10 +332,8 @@
         // Babylon.js block end
     
         window.initFunction = async function() {
-
             webApp = window.Telegram.WebApp;
             if (webApp != null) webApp.expand();
-            
             var asyncEngineCreation = async function() {
                 try {
                     return createDefaultEngine();
@@ -350,6 +347,7 @@
             startRenderLoop(engine, canvas);
             window.scene = createScene();
         };
+
         initFunction().then(() => {sceneToRender = scene});
 
         // Resize

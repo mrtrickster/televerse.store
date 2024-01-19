@@ -49,6 +49,7 @@
 <body>
     <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
     <script>
+		var version = "0.0.1";
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -96,12 +97,32 @@
             const mainFolder = "https://mrtrickster.github.io/televerse.store/";
             const modelsFolder = "https://mrtrickster.github.io/televerse.store/models/";
         
+			var characterData;
             var charactersList;
             var counter = 0;
             var character;
+			
+			var advancedTexture;
             
-            loadCharactersList("male");
+			getCharacterData();
+            //loadCharactersList("male");
             createGUI();
+			
+			function getCharacterData() {
+				var request = webApp.CloudStorage.getItem("characterData", function(error, value) {
+					if (!error) {
+						log(value);
+						characterData = value;
+						loadCharactersList("male");
+					} else {
+						showGenderSwitcher();
+					}
+				});
+			}
+			
+			function showGenderSwitcher() {
+				createGenderSwitchGUI();
+			}
         
             function loadCharactersList(gender) {
                 fetch(mainFolder + gender + 'Characters.json').then(response => response.json()).then(data => {
@@ -168,9 +189,9 @@
         
             function createGUI() {
                 // GUI
-                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
                 
-                debugText = new BABYLON.GUI.TextBlock("debugText", "Start\n");
+                debugText = new BABYLON.GUI.TextBlock("debugText", "Start version " + version + "\n");
                 debugText.color = "white";
                 debugText.fontSize = "10px";
                 debugText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -218,6 +239,48 @@
                 });
                 advancedTexture.addControl(button1);
             }
+			
+			function createGenderSwitchGUI() {
+				var maleButton = BABYLON.GUI.Button.CreateSimpleButton("maleButton", "Male");
+                maleButton.width = "120px"
+                maleButton.height = "40px";
+                maleButton.top = "172px";
+                maleButton.color = "white";
+                maleButton.cornerRadius = 20;
+                maleButton.background = "green";
+                maleButton.onPointerUpObservable.add(function() {
+                    log(webApp.initDataUnsafe.user.first_name + " selected male gender");
+                    webApp.CloudStorage.setItem("characterData", "male");
+					destroyElements([maleButton, femaleButton]);
+					loadCharactersList("male");
+                });
+                advancedTexture.addControl(maleButton);
+				
+				var femaleButton = BABYLON.GUI.Button.CreateSimpleButton("femaleButton", "Female");
+                femaleButton.width = "120px"
+                femaleButton.height = "40px";
+                femaleButton.top = "228px";
+                femaleButton.color = "white";
+                femaleButton.cornerRadius = 20;
+                femaleButton.background = "green";
+                femaleButton.onPointerUpObservable.add(function() {
+                    log(webApp.initDataUnsafe.user.first_name + " selected female gender");
+                    webApp.CloudStorage.setItem("characterData", "female");
+					destroyElements([maleButton, femaleButton]);
+					loadCharactersList("female");
+                });
+                advancedTexture.addControl(femaleButton);
+			}
+			
+			function destroyElements(arr) {
+				for (var i = arr.length - 1; i >= 0; i--) {
+					var element = arr[i];
+					if (element) {
+						element.dispose();
+						element = null;
+					}
+				}
+			}
         
             function log(message) {
                 debugText.text += message + "\n";

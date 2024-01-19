@@ -49,7 +49,7 @@
 <body>
     <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
     <script>
-		var version = "0.0.1";
+		var version = "0.0.2";
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -111,7 +111,7 @@
 			function getCharacterData() {
 				var request = webApp.CloudStorage.getItem("characterData", function(error, value) {
 					if (!error) {
-						log(value);
+						log("characterData: " + value);
 						characterData = value;
 						loadCharactersList("male");
 					} else {

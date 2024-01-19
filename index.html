@@ -73,7 +73,7 @@
             var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(65), 5, new BABYLON.Vector3(0, 1, 0), scene);
         
             // This attaches the camera to the canvas
-            camera.attachControl(canvas, true);
+            camera.attachControl(canvas, false);
             camera.panningAxis = new BABYLON.Vector3.Zero;
             camera.upperBetaLimit = Math.PI/2;
             camera.lowerBetaLimit = 0.1;

@@ -49,7 +49,7 @@
 <body>
     <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
     <script>
-		var version = "0.0.5";
+		var version = "0.0.6";
         var canvas = document.getElementById("renderCanvas");
         var webApp = null;
         var engine = null;
@@ -139,7 +139,7 @@
             }
 			
 			function getCharacterData() {
-				log("Get characted data");
+				log("Get character data");
 				var request = webApp.CloudStorage.getItem("characterData", function(error, value) {
 					if (!error) {
 						if (value === "") {
@@ -180,7 +180,8 @@
 				log("Get selected character");
 				var request = webApp.CloudStorage.getItem("character", function(error, value) {
 					if (!error) {
-						counter = charactersList.indexOf(value);
+						if (value === "") counter = 0;
+						else counter = charactersList.indexOf(value);
 					} else {
 						log(error);
 					}
@@ -337,6 +338,7 @@
 			}
         
             function log(message) {
+				console.log(message);
                 debugText.text += message + "\n";
             }
         

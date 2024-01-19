@@ -49,7 +49,7 @@
 <body>
     <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
     <script>
-		var version = "0.0.4";
+		var version = "0.0.5";
         var canvas = document.getElementById("renderCanvas");
         var webApp = null;
         var engine = null;
@@ -167,6 +167,7 @@
         
             function loadCharactersList(gender) {
 				log("Load " + gender + " characters list");
+				showCharacterSelect();
                 fetch(mainFolder + gender + 'Characters.json').then(response => response.json()).then(data => {
                     charactersList = findNodeByName(data, "characters");
 					getSelectedCharacter();
@@ -207,7 +208,6 @@
                 BABYLON.SceneLoader.ImportMesh("", modelsFolder, charactersList[counter] + ".glb", scene, function(newMeshes){
                     newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
                     character = newMeshes[0];
-					showCharacterSelect();
                 });
             }
             

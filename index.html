@@ -103,7 +103,8 @@
             var character;
 			
 			var advancedTexture;
-            
+            var debugText;
+			
 			getCharacterData();
             createGUI();
 			
@@ -169,7 +170,6 @@
                 BABYLON.SceneLoader.ImportMesh("", modelsFolder, charactersList[counter] + ".glb", scene, function(newMeshes){
                     newMeshes[0].scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
                     character = newMeshes[0];
-					
 					showCharacterSelect();
                 });
             }
@@ -193,8 +193,6 @@
                 // Node with the desired name not found
                 return undefined;
             }
-        
-            var debugText;
         
             function createGUI() {
                 // GUI
